@@ -657,7 +657,7 @@
 
                         </div>
                         <div class="sender"></div>
-                        <div class="receiver"></div>
+                        <!-- <div class="receiver"></div> -->
                      </div>
                      <div class="Input Input-blank">
                         <textarea class="Input_field" placeholder="Send a message..." style="height: 20px;"></textarea>
@@ -692,97 +692,147 @@
    <!-- Vendor JS Files -->
    <!-- Vendor JS Files -->
    <script>
-      $(".sender").hide();
-      $(".receiver").hide();
       $(document).ready(function () {
-         var owl = $('.owl-carousel');
-         owl.owlCarousel({
-            margin: 10,
-            nav: true,
-            loop: true,
-
-            autoplay: true,
-            smartSpeed: 1000,
-            autoplayHoverPause: true,
-            responsive: {
-               0: {
-                  items: 1
-               },
-               600: {
-                  items: 1
-               },
-               1000: {
-                  items: 1
-               }
+        $(".sender").hide(); // Hide sender messages initially
+        $(".receiver").hide(); // Hide receiver messages initially
+    
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+          margin: 10,
+          nav: true,
+          loop: true,
+          autoplay: true,
+          smartSpeed: 1000,
+          autoplayHoverPause: true,
+          responsive: {
+            0: {
+              items: 1
+            },
+            600: {
+              items: 1
+            },
+            1000: {
+              items: 1
             }
-         });
-         $(".chat_on").click(function () {
-            $(".Layout").toggle();
-            $(".chat_on").hide(300);
-         });
-
-         $(".chat_close_icon").click(function () {
-            $(".Layout").hide();
-            $(".chat_on").show(300);
-         });
-
-         $(document).ready(function () {
-            let concatenatedMessage = ""; // Store the concatenated message
-
-            $(".sbtn").click(function (event) {
-               event.preventDefault(); // Prevent the default form submission behavior
-
-               // Retrieve input values
-               const fullName = $("#fname").val().trim();
-               const mailId = $("#mailid").val().trim();
-               const contactNumber = $("#number").val().trim();
-               const query = $("#Query").val().trim();
-
-               if (fullName && mailId && contactNumber && query) {
-                  // Build the current input message
-                  const currentMessage = `Full Name: ${fullName}\nEmail: ${mailId}\nContact Number: ${contactNumber}\nQuery: ${query}`;
-
-                  // Append the new message to the existing concatenated message with a new line
-                  concatenatedMessage += (concatenatedMessage ? "\n\n" : "") + currentMessage;
-
-                  // Populate the sender div with entered details
-                  $(".sender").html(`
-                <pre>${concatenatedMessage}</pre>
-            `).show();
-
-                  // Populate the receiver div with a thank-you message
-                  $(".receiver").html("<p>Thanks for your request! We will reach out to you soon.</p>").show();
-
-                  // Hide the form
-                  $(".Messages_list").hide();
-
-                  // Make the API request
-                  $.ajax({
-                     url: "http://157.245.149.60:8080/api/v1/chatbot/send",
-                     method: "POST",
-                     contentType: "application/json",
-                     data: JSON.stringify({
-                        message: concatenatedMessage,
-                        clientId: "gsi"
-                     }),
-                     xhrFields: {
-                        withCredentials: true // Include credentials if required
-                     },
-                     success: function (response) {
-                        console.log("Message sent successfully:", response);
-                     },
-                     error: function (error) {
-                        console.error("Error sending message:", error);
-                     }
-                  });
-               } else {
-                  // Display an alert if any field is empty
-                  alert("Please fill out all the fields.");
-               }
+          }
+        });
+    
+        $(".chat_on").click(function () {
+          $(".Layout").toggle();
+          $(".chat_on").hide(300);
+        });
+    
+        $(".chat_close_icon").click(function () {
+          $(".Layout").hide();
+          $(".chat_on").show(300);
+        });
+    
+        let concatenatedMessage = ""; // Store the concatenated message
+    
+        // Function to display the "Thanks for reaching out" message
+        function showThanksMessage() {
+          setTimeout(function () {
+            $(".Messages").append(`<div class="receiver"><p>Thanks for reaching out! We will get back to you soon.</p></div>`);
+            $(".receiver").show(); // Show the receiver message
+          }, 500); // Delay for better user experience
+        }
+    
+        $(".sbtn").click(function (event) {
+          event.preventDefault(); // Prevent the default form submission behavior
+    
+          // Retrieve input values
+          const fullName = $("#fname").val().trim();
+          const mailId = $("#mailid").val().trim();
+          const contactNumber = $("#number").val().trim();
+          const query = $("#Query").val().trim();
+    
+          if (fullName && mailId && contactNumber && query) {
+            // Build the current input message
+            const currentMessage = `Full Name: ${fullName}\nEmail: ${mailId}\nContact Number: ${contactNumber}\nQuery: ${query}`;
+    
+            // Append the new message to the existing concatenated message
+            concatenatedMessage += (concatenatedMessage ? "\n\n" : "") + currentMessage;
+    
+            // Add the sender message to the chat
+            $(".Messages").append(`<div class="sender"><pre>${concatenatedMessage}</pre></div>`);
+    
+            // Hide the form inputs after submission
+            $(".Messages_list").hide();
+    
+            // Show the "Thanks for reaching out" message
+            showThanksMessage();
+    
+            // Make the API request
+            $.ajax({
+              url: "http://157.245.149.60:8080/api/v1/chatbot/send",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({
+                message: concatenatedMessage,
+                clientId: "gsi"
+              }),
+              xhrFields: {
+                withCredentials: true // Include credentials if required
+              },
+              success: function (response) {
+                console.log("Message sent successfully:", response);
+              },
+              error: function (error) {
+                console.error("Error sending message:", error);
+              }
             });
-         });
-      })
-   </script>
+          } else {
+            // Display an alert if any field is empty
+            alert("Please fill out all the fields.");
+          }
+        });
+    
+        // For sending text via the chat textarea
+        $(".Input_button-send").click(function (event) {
+          event.preventDefault(); // Prevent default form submission
+    
+          // Retrieve the text from the textarea
+          const message = $(".Input_field").val().trim();
+    
+          if (message) {
+            // Append the new message to the sender div
+            $(".Messages").append(`<div class="sender"><pre>${message}</pre></div>`);
+    
+            // Clear the textarea
+            $(".Input_field").val("");
+    
+            // Update the concatenated message
+            concatenatedMessage += (concatenatedMessage ? "\n\n" : "") + "Message: " + message;
+    
+            // Show the "Thanks for reaching out" message
+            showThanksMessage();
+    
+            // Make the API request to send the message
+            $.ajax({
+              url: "http://157.245.149.60:8080/api/v1/chatbot/send",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({
+                message: concatenatedMessage,
+                clientId: "gsi"
+              }),
+              xhrFields: {
+                withCredentials: true // Include credentials if required
+              },
+              success: function (response) {
+                console.log("Message sent successfully:", response);
+              },
+              error: function (error) {
+                console.error("Error sending message:", error);
+              }
+            });
+          } else {
+            // Display an alert if the message is empty
+            alert("Please enter a message.");
+          }
+        });
+      });
+    </script>
 </body>
 
 </html>
