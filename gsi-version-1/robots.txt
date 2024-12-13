@@ -1,0 +1,13 @@
+User-Agent: Googlebot
+Disallow: 
+User-agent: *
+
+Disallow: /fonts/
+Disallow: /css/  
+Disallow: /images/
+Disallow: /js/
+Disallow: /scss/
+Disallow: /
+
+sitemap: https://www.globalstarintl.com/sitemap.xml
+
