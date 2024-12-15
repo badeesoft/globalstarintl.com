@@ -2130,10 +2130,52 @@ section,
   font-size: 2rem;
   margin-bottom: 1rem;
 }
+.orbtn{
+    position: fixed;
+    top: 135px;
+    z-index: 10;
+    right: 16px;
+   padding: 7px;
+    border-radius: 6px;
+	    background-color: #cec195;
+    color: #000;
+    font-weight: bold;
 
-@media (max-width: 767.98px) {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+
+}
+@media (max-width: 767px) {
+	.orbtn {
+       top:75px;
+        padding: 5px;
+        font-size: 12px;
+        float: left;
+        right:10px;
+       
+}
+	.contact {
+        padding-top:30% !important;
+    }
+	.golden_box,.airafbox{
+		background-image: url(../../images/blackbg2.png);
+        background-size: cover;
+		background-size: cover;
+        padding: 17px;
+    }
+	}
   .gallery {
-    padding-top: 60px;
+    padding-top: 100px;
   }
 
   .contact .info-box h3 {
@@ -3783,7 +3825,7 @@ h2 {
   }
 
   .airfright {
-    padding: 30% 10% 10% 10%;
+    padding: 40% 10% 10% 10%;
 
   }
 
